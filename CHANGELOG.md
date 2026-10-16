@@ -1,5 +1,9 @@
 # Change Log
 
+<a name="2.15.4"></a>
+# 2.15.4 (2026-10-16)
+* Added maps Odon, Authie and Brest
+
 <a name="2.15.3"></a>
 # 2.15.3 (2025-02-26)
 * Added Japan mortar

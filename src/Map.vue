@@ -1688,7 +1688,7 @@ export default {
      * Open GitHub page of this project in a new tab
      */
     openGitHub() {
-      window.open("https://github.com/michalletavka/squadmc", "_blank");
+      window.open("https://github.com/rsxps3/squadmc-public-fnfl", "_blank");
     },
 
     clearPrimaryLine() {
