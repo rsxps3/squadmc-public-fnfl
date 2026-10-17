@@ -506,6 +506,22 @@
       </v-list>
       <v-divider/>
 
+      <!--PRIVACY POLICY LINK-->
+      <v-list
+        class="pa-0"
+        two-line>
+        <v-list-tile @click="openPrivacy()">
+          <v-list-tile-content>
+            <v-list-tile-title>Privacy policy</v-list-tile-title>
+            <v-list-tile-sub-title>Politique de confidentialité (RGPD)</v-list-tile-sub-title>
+          </v-list-tile-content>
+          <v-list-tile-action>
+            <v-icon>open_in_new</v-icon>
+          </v-list-tile-action>
+        </v-list-tile>
+      </v-list>
+      <v-divider/>
+
       <!--ERROR DETECTED ENTRY-->
       <template v-if="ravenError">
         <!--<template>-->
@@ -837,13 +853,6 @@
         </v-list-group>
       </v-list>
       <v-spacer/>
-      <a
-        href="https://www.netlify.com"
-        class="pa-3">
-        <img
-          src="https://www.netlify.com/img/global/badges/netlify-color-bg.svg"
-          alt="Deploys by Netlify" >
-      </a>
     </v-navigation-drawer>
   </v-app>
 </template>
@@ -1683,6 +1692,12 @@ export default {
       } else {
         console.warn("No access to localStorage");
       }
+    },
+    /**
+     * Open the privacy policy page of this site in a new tab
+     */
+    openPrivacy() {
+      window.open("/confidentialite.html", "_blank");
     },
     /**
      * Open GitHub page of this project in a new tab
