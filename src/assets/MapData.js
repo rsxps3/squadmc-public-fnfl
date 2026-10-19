@@ -8,7 +8,7 @@ export default class MapData {
   init(baseUrl) {
     console.log("init:", baseUrl);
     this.url = baseUrl;
-    return fetch(`${baseUrl}/mapdata.json`).then(result => result.json()).then((json) => {
+    return fetch(`${baseUrl}/mapdata.json?t=${Date.now()}`).then(result => result.json()).then((json) => {
       // console.log("fetch result:", json);
       this.data = json;
 

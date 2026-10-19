@@ -36,17 +36,9 @@
                   </v-toolbar-side-icon>
                   <!--<img src="/img/svg/icon.svg" width="40px">-->
                   <v-toolbar-title>
-                    <v-select
-                      class="pa-0"
-                      :items="maps"
-                      :loading="!hideLoadingBar && loading"
-                      append-icon="map"
-                      single-line
-                      v-model="selectedMap"
-                      item-value="text"
-                      max-height="90%"
-                      hide-details
-                    />
+                    <div
+                      ref="mapPicker"
+                      class="map-picker"></div>
                   </v-toolbar-title>
                 </v-toolbar>
               </div>
@@ -864,6 +856,7 @@ import {
 import Vue from "vue";
 // required for Vuetify's a-la-carte functionality
 import "vuetify/src/stylus/app.styl";
+import MapPicker from "./assets/MapPicker";
 import {
   Vuetify,
   VApp,
@@ -1080,6 +1073,7 @@ export default {
     };
   },
   mounted() {
+    this.initMapPicker();
     console.log("mounted");
 
     document.addEventListener("ravenSuccess", (event) => {
@@ -1199,7 +1193,40 @@ export default {
       this.toStorage("version", pkgVersion);
     }
   },
+  beforeDestroy() {
+    if (this.mapPicker) {
+      this.mapPicker.destroy();
+      this.mapPicker = null;
+    }
+  },
   methods: {
+    /**
+     * Creates the map selector of the top toolbar (see assets/MapPicker.js).
+     * It replaces the Vuetify select, whose menu could be taller than the window.
+     */
+    initMapPicker() {
+      if (!this.$refs.mapPicker || this.mapPicker) {
+        return;
+      }
+      this.mapPicker = new MapPicker(this.$refs.mapPicker, {
+        items: this.maps,
+        value: this.selectedMap,
+        onSelect: (name) => {
+          this.selectedMap = name;
+        },
+      });
+      this.mapPicker.setLoading(!this.hideLoadingBar && this.loading);
+      this.$watch("selectedMap", (name) => {
+        if (this.mapPicker) {
+          this.mapPicker.setValue(name);
+        }
+      });
+      this.$watch(() => !this.hideLoadingBar && this.loading, (busy) => {
+        if (this.mapPicker) {
+          this.mapPicker.setLoading(busy);
+        }
+      });
+    },
     /**
      * Does the inital leaflet map setup, adding listeners for mouse click and move
      */
