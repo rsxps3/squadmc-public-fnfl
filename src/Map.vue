@@ -564,27 +564,17 @@
 
       <!--MORTAR TYPE SELECTION-->
       <template v-if="postScriptum">
-        <v-list
-          class="px-0"
-          three-line style="height: 200px; padding-top: 50px;">
-          <v-list-tile>
-            <v-list-tile-content style="height: 200px">
-              <v-list-tile-title>Set mortar type</v-list-tile-title>
-              <v-list-tile-sub-title>
-                <v-btn-toggle
-                  v-model="mTypeIndex"
-                  mandatory
-                  style="display: flex; flex-wrap: wrap;">
-                  <v-btn
-                    flat
-                    v-for="(mType, i) in mortarTypes"
-                    :key="i"
-                    style="flex: 1 0 0; border: none">{{ mType.name }}</v-btn>
-                </v-btn-toggle>
-              </v-list-tile-sub-title>
-            </v-list-tile-content>
-          </v-list-tile>
-        </v-list>
+        <div class="px-3 py-3">
+          <div class="subheading mb-1">Set mortar type</div>
+          <v-select
+            v-model="mTypeIndex"
+            :items="mortarTypeItems"
+            class="pa-0 mt-0"
+            single-line
+            hide-details
+            max-height="420"
+          />
+        </div>
         <v-divider/>
       </template>
 
@@ -2207,6 +2197,14 @@ export default {
         return `↕+${Utils.pad(Math.round(this.mortarSettings.dHeight), 3)}m`;
       }
       return `↕-${Utils.pad(Math.round(-this.mortarSettings.dHeight), 3)}m`;
+    },
+    /**
+     * Returns the mortar types as items for the mortar type dropdown (value = index in mortarTypes).
+     *
+     * @return {{text: string, value: number}[]}
+     */
+    mortarTypeItems() {
+      return this.mortarTypes.map((mType, i) => ({ text: mType.name, value: i }));
     },
     /**
      * Returns current mortar type as MortarType instance.
