@@ -846,6 +846,7 @@ import {
 import Vue from "vue";
 // required for Vuetify's a-la-carte functionality
 import "vuetify/src/stylus/app.styl";
+import CursorBox from "./assets/CursorBox";
 import MapPicker from "./assets/MapPicker";
 import {
   Vuetify,
@@ -1184,12 +1185,49 @@ export default {
     }
   },
   beforeDestroy() {
+    if (this.cursorBox) {
+      this.cursorBox.destroy();
+      this.cursorBox = null;
+    }
     if (this.mapPicker) {
       this.mapPicker.destroy();
       this.mapPicker = null;
     }
   },
   methods: {
+    /**
+     * Azimuth, elevation and distance from the mortar to a point of the map, formatted like the footer, for the box that
+     * follows the cursor. Uses the same calculation and the same range test as the targets table.
+     * @param latlng - point under the cursor
+     * @return {{bearing: string, elevation: string, distance: string, inRange: boolean, note: string}|null} null if there is
+     * no mortar or the point is outside the map
+     */
+    cursorInfo(latlng) {
+      const mortar = this.mortar || this.placedMortars[0];
+      if (!mortar || !this.squadMap || !this.squadMap.bounds.contains(latlng)) {
+        return null;
+      }
+      const settings = this.calcMortarSettings(mortar.pos, latlng);
+      const { minDistance, maxDistance } = this.mortarType;
+      const inRange = !Number.isNaN(settings.elevation) && maxDistance >= settings.dist && settings.dist >= minDistance;
+      let note = "";
+      if (!inRange) {
+        if (settings.dist > maxDistance) {
+          note = `too far (max ${Math.round(maxDistance)} m)`;
+        } else if (settings.dist < minDistance) {
+          note = `too close (min ${Math.round(minDistance)} m)`;
+        } else {
+          note = "no firing solution";
+        }
+      }
+      return {
+        bearing: this.formatDOMBearing(settings.bearing),
+        elevation: this.formatDOMElevation(inRange ? settings.elevation : NaN),
+        distance: `${Utils.pad(Math.round(settings.dist), 4)}m`,
+        inRange,
+        note,
+      };
+    },
     /**
      * Creates the map selector of the top toolbar (see assets/MapPicker.js).
      * It replaces the Vuetify select, whose menu could be taller than the window.
@@ -1236,6 +1274,19 @@ export default {
 
       this.map.on("mousemove", this.onMouseMove, this);
       this.map.on("click", this.onMapClick, this);
+
+      // box next to the cursor: azimuth, elevation and distance from the mortar (green in range, red out of range)
+      this.cursorBox = new CursorBox({
+        container: this.map.getContainer(),
+        host: this.map.getContainer().parentElement,
+        toLatLng: e => this.map.mouseEventToLatLng(e),
+        compute: latlng => this.cursorInfo(latlng),
+      });
+      this.map.on("move zoom", () => {
+        if (this.cursorBox) {
+          this.cursorBox.refresh();
+        }
+      });
     },
 
     /**
