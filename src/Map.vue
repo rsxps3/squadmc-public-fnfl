@@ -846,6 +846,7 @@ import {
 import Vue from "vue";
 // required for Vuetify's a-la-carte functionality
 import "vuetify/src/stylus/app.styl";
+import PinOpacity from "./assets/PinOpacity";
 import CursorBox from "./assets/CursorBox";
 import MapPicker from "./assets/MapPicker";
 import {
@@ -1185,6 +1186,10 @@ export default {
     }
   },
   beforeDestroy() {
+    if (this.pinOpacity) {
+      this.pinOpacity.destroy();
+      this.pinOpacity = null;
+    }
     if (this.cursorBox) {
       this.cursorBox.destroy();
       this.cursorBox = null;
@@ -1195,6 +1200,22 @@ export default {
     }
   },
   methods: {
+    /**
+     * Applies the pin transparency slider to the secondary targets already drawn (they are painted on a canvas, so CSS can't
+     * reach them; the ones created later read the value themselves). Pins and lettered targets are HTML elements handled by CSS
+     * (see assets/PinOpacity.js).
+     * @param {number} opacity - from 0 (invisible) to 1 (opaque)
+     */
+    applyPinOpacity(opacity) {
+      if (!this.subTargetsHolder) {
+        return;
+      }
+      this.subTargetsHolder.targets.forEach((t) => {
+        if (t && t.marker) {
+          t.marker.setStyle({ opacity, fillOpacity: 0.8 * opacity });
+        }
+      });
+    },
     /**
      * Azimuth, elevation and distance from the mortar to a point of the map, formatted like the footer, for the box that
      * follows the cursor. Uses the same calculation and the same range test as the targets table.
@@ -1274,6 +1295,12 @@ export default {
 
       this.map.on("mousemove", this.onMouseMove, this);
       this.map.on("click", this.onMapClick, this);
+
+      // slider (0-100) that makes the pins and the targets transparent
+      this.pinOpacity = new PinOpacity({
+        host: this.map.getContainer().parentElement,
+        onChange: opacity => this.applyPinOpacity(opacity),
+      });
 
       // box next to the cursor: azimuth, elevation and distance from the mortar (green in range, red out of range)
       this.cursorBox = new CursorBox({

@@ -1,5 +1,6 @@
 import { CircleMarker } from "leaflet";
 import MarkerHolder from "./MarkerHolder";
+import { getPinOpacity } from "../PinOpacity";
 import { COLORS } from "../Vars";
 
 export default class SubTarget extends MarkerHolder {
@@ -16,7 +17,8 @@ export default class SubTarget extends MarkerHolder {
       bubblingMouseEvents: false,
       color: COLORS.SUBTARGET,
       fillColor: COLORS.SUBTARGET,
-      fillOpacity: 0.8,
+      opacity: getPinOpacity(), // pin transparency slider
+      fillOpacity: 0.8 * getPinOpacity(),
     });
     if (this._clickHandler) {
       this.marker.on("click", this._clickHandler);

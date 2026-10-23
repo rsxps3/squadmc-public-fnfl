@@ -4,7 +4,7 @@
  *
  * Le module ne connaît ni Leaflet ni Vue : l'application lui donne
  *   - container : l'élément de la carte (la boîte n'apparaît que lorsque le pointeur est au-dessus) ;
- *   - host      : l'élément (positionné) qui reçoit la petite case à cocher, en bas à gauche de la carte ;
+ *   - host      : l'élément (positionné) qui reçoit la petite case à cocher (pile de commandes en bas à gauche de la carte) ;
  *   - toLatLng  : (événement souris) -> position sur la carte ;
  *   - compute   : (position) -> { bearing, elevation, distance, inRange, note } déjà mis en forme comme le pied de page du
  *                 calculateur, ou null s'il n'y a pas de mortier (la boîte est alors masquée).
@@ -16,6 +16,29 @@ const OFFSET = 18;          // distance entre le curseur et la boîte, en pixels
 const EDGE = 6;             // marge minimale avec le bord de la fenêtre
 const MIN_INTERVAL = 30;    // calcul au plus toutes les 30 ms (la boîte, elle, suit le curseur à chaque image)
 
+const STACK_STYLE_ID = "psmc-ctl-stack-style";
+const STACK_CSS = `
+.psmc-ctl-stack{position:absolute;left:12px;bottom:48px;z-index:1;display:flex;flex-direction:column-reverse;align-items:flex-start;gap:8px;pointer-events:none;max-width:calc(100% - 24px)}
+.psmc-ctl-stack>*{pointer-events:auto}
+`;
+/** Pile de commandes en bas à gauche de la carte, partagée avec le curseur « Pin transparency » : chacune garde sa place, sans chevauchement. */
+function controlStack(host) {
+  if (!document.getElementById(STACK_STYLE_ID)) {
+    const st = document.createElement("style");
+    st.id = STACK_STYLE_ID;
+    st.textContent = STACK_CSS;
+    document.head.appendChild(st);
+  }
+  let s = null;
+  for (let i = 0; i < host.children.length; i++) if (host.children[i].classList.contains("psmc-ctl-stack")) s = host.children[i];
+  if (!s) {
+    s = document.createElement("div");
+    s.className = "psmc-ctl-stack";
+    host.appendChild(s);
+  }
+  return s;
+}
+
 const CSS = `
 .cb-box{position:fixed;left:0;top:0;z-index:100;display:none;box-sizing:border-box;min-width:176px;padding:6px 10px 7px;border-radius:4px;
   border:1px solid rgba(255,255,255,.4);color:#fff;font:600 13px/1.4 ui-monospace,Menlo,Consolas,"DejaVu Sans Mono",monospace;
@@ -26,7 +49,7 @@ const CSS = `
 .cb-k{font-weight:500;opacity:.85}
 .cb-status{margin-top:4px;padding-top:3px;border-top:1px solid rgba(255,255,255,.4);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
 .cb-note{font-size:11px;font-weight:500;letter-spacing:0;text-transform:none;opacity:.95;white-space:nowrap}
-.cb-toggle{position:absolute;left:12px;bottom:48px;z-index:1;display:flex;align-items:center;gap:6px;box-sizing:border-box;padding:3px 10px 3px 6px;
+.cb-toggle{order:1;display:flex;align-items:center;gap:6px;box-sizing:border-box;padding:3px 10px 3px 6px;
   border-radius:4px;background:rgba(33,33,33,.92);color:#fff;font:13px/1.5 Roboto,Arial,sans-serif;cursor:pointer;user-select:none;-webkit-user-select:none;
   box-shadow:0 1px 4px rgba(0,0,0,.5)}
 .cb-toggle input{margin:0;width:16px;height:16px;cursor:pointer;accent-color:#2e7d32}
@@ -105,7 +128,7 @@ export default class CursorBox {
     text.textContent = "Cursor info";
     this.toggle.appendChild(this.check);
     this.toggle.appendChild(text);
-    this.host.appendChild(this.toggle);
+    controlStack(this.host).appendChild(this.toggle);
     this.check.addEventListener("change", () => this.setEnabled(this.check.checked));
     if (this.enabled) this.attach();
   }
@@ -213,6 +236,8 @@ export default class CursorBox {
     if (this.raf) window.cancelAnimationFrame(this.raf);
     this.raf = 0;
     this.detach();
+    const stack = this.toggle ? this.toggle.parentNode : null;
     [this.box, this.toggle].forEach((e) => { if (e && e.parentNode) e.parentNode.removeChild(e); });
+    if (stack && !stack.children.length && stack.parentNode) stack.parentNode.removeChild(stack);    // pile vide : retirée aussi
   }
 }
