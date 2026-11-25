@@ -108,7 +108,7 @@
                 <v-icon style="width: 24px; height: 24px">add</v-icon>
               </v-btn>
               <v-card>
-                <v-card-title style="background-color: #212121">Add Mortar/Target</v-card-title>
+                <v-card-title style="background-color: #0b1a0e">Add Mortar/Target</v-card-title>
                 <v-divider/>
                 <v-card-text class="px-0">
                   <div><p align="center">Press icon buttons to cycle through marker colors</p></div>
@@ -191,7 +191,7 @@
                   <v-layout row>
                     <v-layout
                       column
-                      style="border-right: 2px #212121 solid">
+                      style="border-right: 2px #0b1a0e solid">
                       <v-btn
                         icon
                         large
@@ -219,7 +219,7 @@
                     </v-layout>
                     <v-layout
                       column
-                      style="border-left: 2px #212121 solid">
+                      style="border-left: 2px #0b1a0e solid">
                       <v-btn
                         icon
                         large
@@ -462,16 +462,18 @@
       mobile-break-point="640"
       style="max-height: 100%; display: flex; flex-direction: column"
     >
-      <!--APP TITLE AND CHANGELOG BUTTON-->
+      <!--APP TITLE + FNFL LOGO-->
       <v-toolbar dense>
         <v-toolbar-title
           class="flex"
-          style="flex-grow: 1; justify-content: space-between">
-          {{ postScriptum ? "PostScriptumMC" : "SquadMC" }}
-          <v-btn
-            color="primary"
-            @click.stop="changelogDialog = true"
-            style="min-width: 70px">{{ appVersion }}</v-btn>
+          style="flex-grow: 1; justify-content: space-between; align-items: center; font-size: 15px; margin-left: -4px; margin-right: -8px; white-space: nowrap">
+          FNFL Public Mortar Calculator
+          <img
+            src="/fnfl-logo.png"
+            alt="FNFL"
+            width="32"
+            height="32"
+            style="display: block; flex-shrink: 0; margin-left: 6px">
         </v-toolbar-title>
       </v-toolbar>
 
@@ -1247,6 +1249,7 @@ export default {
         distance: `${Utils.pad(Math.round(settings.dist), 4)}m`,
         inRange,
         note,
+        keypad: Utils.getKP(latlng.lat, latlng.lng),
       };
     },
     /**

@@ -8,6 +8,12 @@ gracefulFs.gracefulify(realFs);
 
 
 module.exports = {
+  css: {
+    loaderOptions: {
+      // thème sombre vert (commandos marine), chargé avant chaque feuille stylus de Vuetify
+      stylus: { import: [require("path").resolve(__dirname, "src/stylus/fnfl-theme.styl")] },
+    },
+  },
   chainWebpack: () => {
     if (process.env.NODE_ENV === "production") {
       // console.log("PLUGINS: ", config.plugins);

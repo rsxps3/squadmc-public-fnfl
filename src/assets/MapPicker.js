@@ -19,11 +19,11 @@ const CSS = `
 .mp-btn.mp-loading::after{content:"";position:absolute;left:0;bottom:-1px;height:2px;width:35%;background:#2196f3;animation:mp-load 1.1s ease-in-out infinite}
 @keyframes mp-load{0%{left:-35%}100%{left:100%}}
 .mp-panel{position:fixed;z-index:2000;display:none;flex-direction:column;box-sizing:border-box;min-width:240px;
-  background:#424242;color:#fff;border-radius:4px;overflow:hidden;font:inherit;font-size:16px;
+  background:#1a3a22;color:#fff;border-radius:4px;overflow:hidden;font:inherit;font-size:16px;
   box-shadow:0 5px 5px -3px rgba(0,0,0,.2),0 8px 10px 1px rgba(0,0,0,.14),0 3px 14px 2px rgba(0,0,0,.12)}
 .mp-panel.mp-open{display:flex}
 .mp-search{flex:0 0 auto;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.12)}
-.mp-search input{box-sizing:border-box;width:100%;height:36px;padding:0 10px;background:#303030;color:#fff;border:1px solid rgba(255,255,255,.25);
+.mp-search input{box-sizing:border-box;width:100%;height:36px;padding:0 10px;background:#0f2213;color:#fff;border:1px solid rgba(255,255,255,.25);
   border-radius:4px;font:inherit;font-size:15px;outline:0}
 .mp-search input:focus{border-color:#2196f3}
 .mp-list{flex:1 1 auto;min-height:0;margin:0;padding:4px 0;list-style:none;overflow-y:auto;overscroll-behavior:contain;

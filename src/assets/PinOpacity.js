@@ -24,7 +24,7 @@ const STACK_CSS = `
 const CSS = `
 .leaflet-marker-icon{opacity:calc(1 - var(${VAR}, 0) / 100)!important}
 .po-pill{order:2;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:1px 8px;box-sizing:border-box;width:208px;max-width:100%;padding:4px 10px 6px;
-  border-radius:4px;background:rgba(33,33,33,.92);color:#fff;font:13px/1.5 Roboto,Arial,sans-serif;box-shadow:0 1px 4px rgba(0,0,0,.5);user-select:none;-webkit-user-select:none}
+  border-radius:4px;background:rgba(11,26,14,.92);color:#fff;font:13px/1.5 Roboto,Arial,sans-serif;box-shadow:0 1px 4px rgba(0,0,0,.5);user-select:none;-webkit-user-select:none}
 .po-label{grid-column:1;white-space:nowrap}
 .po-out{grid-column:2;min-width:40px;text-align:right;font:600 13px/1.5 ui-monospace,Menlo,Consolas,monospace}
 .po-reset{grid-column:3;width:22px;height:22px;margin:0;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;font:15px/22px Arial,sans-serif;cursor:pointer}

@@ -64,7 +64,7 @@ export default {
     top: 0;
     left: 0;
     right: 0;
-    background-color: #212121
+    background-color: #0b1a0e
   }
 
   /*

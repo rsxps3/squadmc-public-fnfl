@@ -6,7 +6,7 @@
  *   - container : l'élément de la carte (la boîte n'apparaît que lorsque le pointeur est au-dessus) ;
  *   - host      : l'élément (positionné) qui reçoit la petite case à cocher (pile de commandes en bas à gauche de la carte) ;
  *   - toLatLng  : (événement souris) -> position sur la carte ;
- *   - compute   : (position) -> { bearing, elevation, distance, inRange, note } déjà mis en forme comme le pied de page du
+ *   - compute   : (position) -> { bearing, elevation, distance, inRange, note, keypad } déjà mis en forme comme le pied de page du
  *                 calculateur, ou null s'il n'y a pas de mortier (la boîte est alors masquée).
  * Le choix de la case est mémorisé dans le navigateur. Sur un écran sans souris (téléphone, tablette), rien n'est affiché.
  */
@@ -48,9 +48,11 @@ const CSS = `
 .cb-row{display:flex;justify-content:space-between;gap:16px;white-space:nowrap}
 .cb-k{font-weight:500;opacity:.85}
 .cb-status{margin-top:4px;padding-top:3px;border-top:1px solid rgba(255,255,255,.4);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.cb-line{display:flex;justify-content:space-between;align-items:baseline;gap:16px;white-space:nowrap}
+.cb-kp{font-size:12px;letter-spacing:.02em;text-transform:none}
 .cb-note{font-size:11px;font-weight:500;letter-spacing:0;text-transform:none;opacity:.95;white-space:nowrap}
 .cb-toggle{order:1;display:flex;align-items:center;gap:6px;box-sizing:border-box;padding:3px 10px 3px 6px;
-  border-radius:4px;background:rgba(33,33,33,.92);color:#fff;font:13px/1.5 Roboto,Arial,sans-serif;cursor:pointer;user-select:none;-webkit-user-select:none;
+  border-radius:4px;background:rgba(11,26,14,.92);color:#fff;font:13px/1.5 Roboto,Arial,sans-serif;cursor:pointer;user-select:none;-webkit-user-select:none;
   box-shadow:0 1px 4px rgba(0,0,0,.5)}
 .cb-toggle input{margin:0;width:16px;height:16px;cursor:pointer;accent-color:#2e7d32}
 .cb-toggle:focus-within{outline:2px solid #2196f3;outline-offset:1px}
@@ -110,10 +112,17 @@ export default class CursorBox {
     });
     this.status = document.createElement("div");
     this.status.className = "cb-status";
-    this.statusText = document.createElement("div");
+    // « IN RANGE » à gauche, case de la grille sous le curseur (ex. F08-5-3) à droite
+    const line = document.createElement("div");
+    line.className = "cb-line";
+    this.statusText = document.createElement("span");
+    this.kpText = document.createElement("span");
+    this.kpText.className = "cb-kp";
+    line.appendChild(this.statusText);
+    line.appendChild(this.kpText);
     this.noteText = document.createElement("div");
     this.noteText.className = "cb-note";
-    this.status.appendChild(this.statusText);
+    this.status.appendChild(line);
     this.status.appendChild(this.noteText);
     this.box.appendChild(this.status);
     document.body.appendChild(this.box);
@@ -196,13 +205,14 @@ export default class CursorBox {
   }
 
   render(info) {
-    const changed = !this.info || ["bearing", "elevation", "distance", "inRange", "note"].some(k => this.info[k] !== info[k]);
+    const changed = !this.info || ["bearing", "elevation", "distance", "inRange", "note", "keypad"].some(k => this.info[k] !== info[k]);
     this.info = info;
     if (!changed && this.shown) return;
     this.rows.bearing.textContent = info.bearing;
     this.rows.elevation.textContent = info.elevation;
     this.rows.distance.textContent = info.distance;
     this.statusText.textContent = info.inRange ? "In range" : "Out of range";
+    this.kpText.textContent = info.keypad || "";
     this.noteText.textContent = info.note || "";
     this.noteText.style.display = info.note ? "block" : "none";
     this.box.classList.toggle("cb-in", !!info.inRange);

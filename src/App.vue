@@ -57,6 +57,13 @@ export default {
 };
 </script>
 <style>
+  /* les gris foncés de Material (boutons ronds, barre du bas, cases) deviennent vert commando marine
+     (le reste du thème sombre : src/stylus/fnfl-theme.styl) */
+  .application .grey.darken-4 { background-color: #0b1a0e !important; border-color: #0b1a0e !important; }
+  .application .grey.darken-3 { background-color: #1a3a22 !important; border-color: #1a3a22 !important; }
+  .application .grey.darken-2 { background-color: #285a34 !important; border-color: #285a34 !important; }
+  .application .grey.darken-1 { background-color: #336b40 !important; border-color: #336b40 !important; }
+
   /*hide scrollbar*/
   body {
     overflow-y: hidden;
